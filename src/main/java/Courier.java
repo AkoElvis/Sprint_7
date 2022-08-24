@@ -1,5 +1,9 @@
 //POJO Courier для передачи в запрос JSON как объект класса
 
+import io.restassured.response.Response;
+
+import static io.restassured.RestAssured.given;
+
 public class Courier {
 
 private String login;
@@ -42,5 +46,22 @@ private String firstName;
 
     public void setFirstName(String firstName) {
         this.firstName = firstName;
+    }
+
+    public Response getResponseCreateCourier(Object body) {
+        return given()
+                .header("Content-type", "application/json")
+                .and()
+                .body(body)
+                .when()
+                .post("/api/v1/courier");
+    }
+
+    public Response getResponseLoginCourier(Object body) {
+        return given()
+                .header("Content-type", "application/json")
+                .body(body)
+                .when()
+                .post("/api/v1/courier/login");
     }
 }

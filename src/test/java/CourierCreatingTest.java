@@ -24,7 +24,6 @@ public class CourierCreatingTest {
         this.password = "KolyaevCourierCreatingTest" + new Random().nextInt(100);
     }
 
-
     @After
     public void deleteCreatedCourier() {
         Courier createdCourier = new Courier(login,password);
@@ -45,31 +44,17 @@ public class CourierCreatingTest {
 
     @Test
     public void checkSuccessfulBodyAndCode() {
-
         Courier courier = new Courier(login,password,firstName );
-        Response response =
-                given()
-                        .header("Content-type", "application/json")
-                        .body(courier)
-                        .when()
-                        .post("/api/v1/courier");
+        Response response = courier.getResponseCreateCourier(courier);
         response.then().assertThat().body("ok", equalTo(true))
                 .and()
                 .statusCode(201);
-
     }
 
     @Test
     public void checkNoLoginBodyAndCode() {
-
-
         Courier courier = new Courier("", password,firstName);
-        Response response =
-                given()
-                        .header("Content-type", "application/json")
-                        .body(courier)
-                        .when()
-                        .post("/api/v1/courier");
+        Response response = courier.getResponseCreateCourier(courier);
         response.then().assertThat().body("message", equalTo("Недостаточно данных для создания учетной записи"))
                 .and()
                 .statusCode(400);
@@ -79,12 +64,7 @@ public class CourierCreatingTest {
     public void checkNoPasswordBodyAndCode() {
 
         Courier courier = new Courier(login, "", firstName);
-        Response response =
-                given()
-                        .header("Content-type", "application/json")
-                        .body(courier)
-                        .when()
-                        .post("/api/v1/courier");
+        Response response = courier.getResponseCreateCourier(courier);;
         response.then().assertThat().body("message", equalTo("Недостаточно данных для создания учетной записи"))
                 .and()
                 .statusCode(400);
@@ -94,12 +74,7 @@ public class CourierCreatingTest {
     public void checkNoLoginNoPasswordBodyAndCode() {
 
         Courier courier = new Courier("", "", firstName);
-        Response response =
-                given()
-                        .header("Content-type", "application/json")
-                        .body(courier)
-                        .when()
-                        .post("/api/v1/courier");
+        Response response = courier.getResponseCreateCourier(courier);
         response.then().assertThat().body("message", equalTo("Недостаточно данных для создания учетной записи"))
                 .and()
                 .statusCode(400);
@@ -112,17 +87,9 @@ public class CourierCreatingTest {
     public void checkExistedLoginBodyAndCode() {
 
         Courier courier = new Courier(login,password,firstName );
-                given()
-                        .header("Content-type", "application/json")
-                        .body(courier)
-                        .when()
-                        .post("/api/v1/courier");
+                courier.getResponseCreateCourier(courier);
 
-        Response response = given()
-                .header("Content-type", "application/json")
-                .body(courier)
-                .when()
-                .post("/api/v1/courier");
+        Response response = courier.getResponseCreateCourier(courier);
 
         response.then().assertThat().body("message", equalTo("Этот логин уже используется. Попробуйте другой."))
                 .and()

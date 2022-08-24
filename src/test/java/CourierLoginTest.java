@@ -19,7 +19,6 @@ public class CourierLoginTest {
 
     @Before
     public void setUp() {
-
         RestAssured.baseURI = BASE_URL;
 
         String firstName = "KolyaevCourierLoginTest" + new Random().nextInt(100);
@@ -36,13 +35,10 @@ public class CourierLoginTest {
 
     @After
     public void deleteCreatedCourier() {
-
         if (response.statusCode() == 200) {
-
             CourierId courierId = response.body().as(CourierId.class);
             int id = courierId.getId();
-
-        given()
+            given()
                 .header("Content-type", "application/json")
                 .body("{ \"id\": \"" + id + "\"}")
                 .delete("/api/v1/courier/" + id);
@@ -51,13 +47,8 @@ public class CourierLoginTest {
 
     @Test
     public void checkCorrectLoginAndPasswordBodyAndCode() {
-
         Courier createdCourier = new Courier(login, password);
-        this.response = given()
-                .header("Content-type", "application/json")
-                .body(createdCourier)
-                .when()
-                .post("/api/v1/courier/login");
+        this.response = createdCourier.getResponseLoginCourier(createdCourier);
         response.then().assertThat().body("id", notNullValue())
                 .and()
                 .statusCode(200);
@@ -65,13 +56,8 @@ public class CourierLoginTest {
 
     @Test
     public void checkNoLoginBodyAndCode() {
-
         Courier createdCourier = new Courier("", password);
-        this.response = given()
-                .header("Content-type", "application/json")
-                .body(createdCourier)
-                .when()
-                .post("/api/v1/courier/login");
+        this.response = createdCourier.getResponseLoginCourier(createdCourier);
         response.then().assertThat().body("message", equalTo("Недостаточно данных для входа"))
                 .and()
                 .statusCode(400);
@@ -79,13 +65,8 @@ public class CourierLoginTest {
 
     @Test
     public void checkNoPasswordBodyAndCode() {
-
         Courier createdCourier = new Courier(login, "");
-        this.response = given()
-                .header("Content-type", "application/json")
-                .body(createdCourier)
-                .when()
-                .post("/api/v1/courier/login");
+        this.response = createdCourier.getResponseLoginCourier(createdCourier);
         response.then().assertThat().body("message", equalTo("Недостаточно данных для входа"))
                 .and()
                 .statusCode(400);
@@ -93,13 +74,8 @@ public class CourierLoginTest {
 
     @Test
     public void checkNoLoginNoPasswordBodyAndCode() {
-
         Courier createdCourier = new Courier("", "");
-        this.response = given()
-                .header("Content-type", "application/json")
-                .body(createdCourier)
-                .when()
-                .post("/api/v1/courier/login");
+        this.response = createdCourier.getResponseLoginCourier(createdCourier);
         response.then().assertThat().body("message", equalTo("Недостаточно данных для входа"))
                 .and()
                 .statusCode(400);
@@ -107,13 +83,8 @@ public class CourierLoginTest {
 
     @Test
     public void checkNotExistedLoginBodyAndCode() {
-
         Courier createdCourier = new Courier("KolyaevCourierLoginTest" + new Random().nextInt(100) , "KolyaevCourierLoginTest" + new Random().nextInt(100));
-        this.response = given()
-                .header("Content-type", "application/json")
-                .body(createdCourier)
-                .when()
-                .post("/api/v1/courier/login");
+        this.response = createdCourier.getResponseLoginCourier(createdCourier);
         response.then().assertThat().body("message", equalTo("Учетная запись не найдена"))
                 .and()
                 .statusCode(404);
