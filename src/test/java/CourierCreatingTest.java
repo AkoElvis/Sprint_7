@@ -1,3 +1,5 @@
+import Constants.Messages;
+import Constants.TestStandEndpoints;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.junit.After;
@@ -6,7 +8,6 @@ import org.junit.Test;
 
 import java.util.Random;
 
-import static Constants.TestStand.BASE_URL;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 
@@ -18,7 +19,7 @@ public class CourierCreatingTest {
 
     @Before
     public void setUp() {
-        RestAssured.baseURI = BASE_URL;
+        RestAssured.baseURI = TestStandEndpoints.BASE_URL;
         this.firstName = "KolyaevCourierCreatingTest" + new Random().nextInt(100);
         this.login = "KolyaevCourierCreatingTest" + new Random().nextInt(100);
         this.password = "KolyaevCourierCreatingTest" + new Random().nextInt(100);
@@ -27,11 +28,7 @@ public class CourierCreatingTest {
     @After
     public void deleteCreatedCourier() {
         Courier createdCourier = new Courier(login,password);
-        Response courierLoginResponse = given()
-                .header("Content-type", "application/json")
-                .body(createdCourier)
-                .when()
-                .post("/api/v1/courier/login");
+        Response courierLoginResponse = createdCourier.getResponseLoginCourier(createdCourier);
         CourierId courierId = courierLoginResponse.body().as(CourierId.class);
 
         int id = courierId.getId();
@@ -55,7 +52,7 @@ public class CourierCreatingTest {
     public void checkNoLoginBodyAndCode() {
         Courier courier = new Courier("", password,firstName);
         Response response = courier.getResponseCreateCourier(courier);
-        response.then().assertThat().body("message", equalTo("Недостаточно данных для создания учетной записи"))
+        response.then().assertThat().body("message", equalTo(Messages.INCOMPLETE_DATA_TO_CREATE))
                 .and()
                 .statusCode(400);
     }
@@ -64,8 +61,8 @@ public class CourierCreatingTest {
     public void checkNoPasswordBodyAndCode() {
 
         Courier courier = new Courier(login, "", firstName);
-        Response response = courier.getResponseCreateCourier(courier);;
-        response.then().assertThat().body("message", equalTo("Недостаточно данных для создания учетной записи"))
+        Response response = courier.getResponseCreateCourier(courier);
+        response.then().assertThat().body("message", equalTo(Messages.INCOMPLETE_DATA_TO_CREATE))
                 .and()
                 .statusCode(400);
     }
@@ -75,7 +72,7 @@ public class CourierCreatingTest {
 
         Courier courier = new Courier("", "", firstName);
         Response response = courier.getResponseCreateCourier(courier);
-        response.then().assertThat().body("message", equalTo("Недостаточно данных для создания учетной записи"))
+        response.then().assertThat().body("message", equalTo(Messages.INCOMPLETE_DATA_TO_CREATE))
                 .and()
                 .statusCode(400);
     }
@@ -91,7 +88,7 @@ public class CourierCreatingTest {
 
         Response response = courier.getResponseCreateCourier(courier);
 
-        response.then().assertThat().body("message", equalTo("Этот логин уже используется. Попробуйте другой."))
+        response.then().assertThat().body("message", equalTo(Messages.EXISTED_LOGIN))
                 .and()
                 .statusCode(409);
     }

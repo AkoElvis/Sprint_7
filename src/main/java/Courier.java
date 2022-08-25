@@ -1,5 +1,6 @@
 //POJO Courier для передачи в запрос JSON как объект класса
 
+import Constants.TestStandEndpoints;
 import io.restassured.response.Response;
 
 import static io.restassured.RestAssured.given;
@@ -54,7 +55,7 @@ private String firstName;
                 .and()
                 .body(body)
                 .when()
-                .post("/api/v1/courier");
+                .post(TestStandEndpoints.COURIER_CREATE_ENDPOINT);
     }
 
     public Response getResponseLoginCourier(Object body) {
@@ -62,6 +63,6 @@ private String firstName;
                 .header("Content-type", "application/json")
                 .body(body)
                 .when()
-                .post("/api/v1/courier/login");
+                .post(TestStandEndpoints.COURIER_LOGIN_ENDPOINT);
     }
 }

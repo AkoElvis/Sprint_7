@@ -1,3 +1,4 @@
+import Constants.TestStandEndpoints;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.junit.Before;
@@ -7,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import static Constants.TestStand.BASE_URL;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.notNullValue;
 
@@ -26,7 +26,7 @@ public class OrderCreatingTest {
 
     @Before
     public void setUp() {
-        RestAssured.baseURI = BASE_URL;
+        RestAssured.baseURI = TestStandEndpoints.BASE_URL;
     this.firstName = "KolyaevOrder" + new Random().nextInt(100);
     this.lastName = "KolyaevOrder" + new Random().nextInt(100);
     this.address = "KolyaevOrder" + new Random().nextInt(100);
@@ -46,7 +46,7 @@ public class OrderCreatingTest {
                 .header("Content-type", "application/json")
                 .body(orderCreating)
                 .when()
-                .post("/api/v1/orders");
+                .post(TestStandEndpoints.ORDER_CREATING_ENDPOINT);
         response.then().assertThat().body("track", notNullValue())
                 .and()
                 .statusCode(201);
@@ -61,7 +61,7 @@ public class OrderCreatingTest {
                 .header("Content-type", "application/json")
                 .body(orderCreating)
                 .when()
-                .post("/api/v1/orders");
+                .post(TestStandEndpoints.ORDER_CREATING_ENDPOINT);
         response.then().assertThat().body("track", notNullValue())
                 .and()
                 .statusCode(201);
@@ -76,7 +76,7 @@ public class OrderCreatingTest {
                 .header("Content-type", "application/json")
                 .body(orderCreating)
                 .when()
-                .post("/api/v1/orders");
+                .post(TestStandEndpoints.ORDER_CREATING_ENDPOINT);
         response.then().assertThat().body("track", notNullValue())
                 .and()
                 .statusCode(201);
@@ -93,7 +93,7 @@ public class OrderCreatingTest {
                 .header("Content-type", "application/json")
                 .body(orderCreating)
                 .when()
-                .post("/api/v1/orders");
+                .post(TestStandEndpoints.ORDER_CREATING_ENDPOINT);
         response.then().assertThat().body("track", notNullValue())
                 .and()
                 .statusCode(201);
