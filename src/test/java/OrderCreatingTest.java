@@ -8,7 +8,6 @@ import org.junit.Before;
 import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
-import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.notNullValue;
 
 public class OrderCreatingTest {
@@ -22,7 +21,6 @@ public class OrderCreatingTest {
     private String deliveryDate;
     private String comment;
     private List<String> color;
-
 
     @Before
     public void setUp() {

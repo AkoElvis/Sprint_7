@@ -29,8 +29,6 @@ public class Order {
         this.color = color;
     }
 
-    public Order() {
-    }
 
     public String getFirstName() {
         return firstName;
