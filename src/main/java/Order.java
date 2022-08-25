@@ -1,4 +1,5 @@
 import Constants.TestStandEndpoints;
+import io.qameta.allure.Step;
 import io.restassured.response.Response;
 
 import java.util.List;
@@ -102,11 +103,13 @@ public class Order {
         this.color = color;
     }
 
+    @Step("Get response for orders list")
     public static Response getOrdersListResponse() {
         return given()
                 .get(TestStandEndpoints.ORDER_CREATING_ENDPOINT);
     }
 
+    @Step("Get response for creating order")
     public Response getOrderCreatingResponse(Object body) {
         return given()
                 .header("Content-type", "application/json")

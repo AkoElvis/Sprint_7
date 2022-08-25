@@ -1,6 +1,7 @@
 //POJO Courier для передачи в запрос JSON как объект класса
 
 import Constants.TestStandEndpoints;
+import io.qameta.allure.Step;
 import io.restassured.response.Response;
 
 import static io.restassured.RestAssured.given;
@@ -49,6 +50,7 @@ private String firstName;
         this.firstName = firstName;
     }
 
+    @Step("Get response for creating courier")
     public Response getResponseCreateCourier(Object body) {
         return given()
                 .header("Content-type", "application/json")
@@ -58,6 +60,7 @@ private String firstName;
                 .post(TestStandEndpoints.COURIER_CREATE_ENDPOINT);
     }
 
+    @Step("Creating courier")
     public static void createCourier(Object body) {
         given()
                 .header("Content-type", "application/json")
@@ -67,6 +70,7 @@ private String firstName;
                 .post(TestStandEndpoints.COURIER_CREATE_ENDPOINT);
     }
 
+    @Step("Get response to courier login")
     public Response getResponseLoginCourier(Object body) {
         return given()
                 .header("Content-type", "application/json")
@@ -75,6 +79,7 @@ private String firstName;
                 .post(TestStandEndpoints.COURIER_LOGIN_ENDPOINT);
     }
 
+    @Step("Deleting courier")
     public static void deleteCourier(int id) {
         given()
                 .header("Content-type", "application/json")
