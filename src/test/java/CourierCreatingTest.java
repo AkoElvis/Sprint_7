@@ -1,13 +1,11 @@
 import Constants.Messages;
 import Constants.TestStandEndpoints;
+import TestData.CreatingRandomData;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.Random;
-
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 
@@ -20,9 +18,9 @@ public class CourierCreatingTest {
     @Before
     public void setUp() {
         RestAssured.baseURI = TestStandEndpoints.BASE_URL;
-        this.firstName = "KolyaevCourierCreatingTest" + new Random().nextInt(100);
-        this.login = "KolyaevCourierCreatingTest" + new Random().nextInt(100);
-        this.password = "KolyaevCourierCreatingTest" + new Random().nextInt(100);
+        this.firstName = CreatingRandomData.getRandomKolyaevString();
+        this.login = CreatingRandomData.getRandomKolyaevString();
+        this.password = CreatingRandomData.getRandomKolyaevString();
     }
 
     @After
@@ -30,13 +28,7 @@ public class CourierCreatingTest {
         Courier createdCourier = new Courier(login,password);
         Response courierLoginResponse = createdCourier.getResponseLoginCourier(createdCourier);
         CourierId courierId = courierLoginResponse.body().as(CourierId.class);
-
-        int id = courierId.getId();
-
-        given()
-                .header("Content-type", "application/json")
-                .body("{ \"id\": \"" + id + "\"}")
-                .delete("/api/v1/courier/" + id);
+        Courier.deleteCourier(courierId.getId());
     }
 
     @Test
@@ -77,17 +69,12 @@ public class CourierCreatingTest {
                 .statusCode(400);
     }
 
-    //Не смог придумать как сделать этот тест по-нормальному независимым. Хотелось бы использовать здесь способ подготовки
-    //тестовых данных "Запрос данных у приложения", сходить в таблицу Couriers и взять там первый из массива id, но не вижу
-    //в документации такой ручки
     @Test
     public void checkExistedLoginBodyAndCode() {
 
         Courier courier = new Courier(login,password,firstName );
                 courier.getResponseCreateCourier(courier);
-
         Response response = courier.getResponseCreateCourier(courier);
-
         response.then().assertThat().body("message", equalTo(Messages.EXISTED_LOGIN))
                 .and()
                 .statusCode(409);

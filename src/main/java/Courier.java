@@ -58,11 +58,27 @@ private String firstName;
                 .post(TestStandEndpoints.COURIER_CREATE_ENDPOINT);
     }
 
+    public static void createCourier(Object body) {
+        given()
+                .header("Content-type", "application/json")
+                .and()
+                .body(body)
+                .when()
+                .post(TestStandEndpoints.COURIER_CREATE_ENDPOINT);
+    }
+
     public Response getResponseLoginCourier(Object body) {
         return given()
                 .header("Content-type", "application/json")
                 .body(body)
                 .when()
                 .post(TestStandEndpoints.COURIER_LOGIN_ENDPOINT);
+    }
+
+    public static void deleteCourier(int id) {
+        given()
+                .header("Content-type", "application/json")
+                .body("{ \"id\": \"" + id + "\"}")
+                .delete("/api/v1/courier/" + id);
     }
 }
