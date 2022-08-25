@@ -1,6 +1,8 @@
 import Constants.Messages;
 import Constants.TestStandEndpoints;
 import TestData.CreatingRandomData;
+import io.qameta.allure.Description;
+import io.qameta.allure.junit4.DisplayName;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.junit.After;
@@ -18,15 +20,15 @@ public class CourierLoginTest {
     @Before
     public void setUp() {
         RestAssured.baseURI = TestStandEndpoints.BASE_URL;
-
         String firstName = CreatingRandomData.getRandomKolyaevString();
         this.login = CreatingRandomData.getRandomKolyaevString();
         this.password = CreatingRandomData.getRandomKolyaevString();
-
         Courier courier = new Courier(login, password, firstName);
         Courier.createCourier(courier);
     }
 
+    //заметил ошибку, в прошлой версии удалялись тестовые данные только курьера из теста checkCorrectLoginAndPasswordBodyAndCode
+    //от остальных 4 тестов оставались лог/пасс неудаленными
     @After
     public void deleteCreatedCourier() {
         Courier createdCourier = new Courier(login,password);
@@ -36,6 +38,8 @@ public class CourierLoginTest {
     }
 
     @Test
+    @DisplayName("Checking the ability to log in with valid credentials")
+    @Description("Checking the body and status code of a successful response")
     public void checkCorrectLoginAndPasswordBodyAndCode() {
         Courier courier = new Courier(login, password);
         this.response = courier.getResponseLoginCourier(courier);
@@ -45,6 +49,8 @@ public class CourierLoginTest {
     }
 
     @Test
+    @DisplayName("Checking the inability to log in without a login")
+    @Description("Checking the body and status code of an unsuccessful response")
     public void checkNoLoginBodyAndCode() {
         Courier courier = new Courier("", password);
         this.response = courier.getResponseLoginCourier(courier);
@@ -54,6 +60,8 @@ public class CourierLoginTest {
     }
 
     @Test
+    @DisplayName("Checking the inability to log in without a password")
+    @Description("Checking the body and status code of an unsuccessful response")
     public void checkNoPasswordBodyAndCode() {
         Courier courier = new Courier(login, "");
         this.response = courier.getResponseLoginCourier(courier);
@@ -63,6 +71,8 @@ public class CourierLoginTest {
     }
 
     @Test
+    @DisplayName("Checking the inability to log in without a login and password")
+    @Description("Checking the body and status code of an unsuccessful response")
     public void checkNoLoginNoPasswordBodyAndCode() {
         Courier courier = new Courier("", "");
         this.response = courier.getResponseLoginCourier(courier);
@@ -72,6 +82,8 @@ public class CourierLoginTest {
     }
 
     @Test
+    @DisplayName("Checking the inability to log in with non-existent credentials")
+    @Description("Checking the body and status code of an unsuccessful response")
     public void checkNotExistedLoginBodyAndCode() {
         Courier courier = new Courier(CreatingRandomData.getRandomKolyaevString(), CreatingRandomData.getRandomKolyaevString());
         this.response = courier.getResponseLoginCourier(courier);

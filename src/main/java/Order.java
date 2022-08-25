@@ -1,6 +1,11 @@
+import Constants.TestStandEndpoints;
+import io.restassured.response.Response;
+
 import java.util.List;
 
-public class OrderCreating {
+import static io.restassured.RestAssured.given;
+
+public class Order {
 
     private String firstName;
     private String lastName;
@@ -12,7 +17,7 @@ public class OrderCreating {
     private String comment;
     private List<String> color;
 
-    public OrderCreating(String firstName, String lastName, String address, String metroStation, String phone, int number, String deliveryDate, String comment, List<String> color) {
+    public Order(String firstName, String lastName, String address, String metroStation, String phone, int number, String deliveryDate, String comment, List<String> color) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.address = address;
@@ -24,7 +29,7 @@ public class OrderCreating {
         this.color = color;
     }
 
-    public OrderCreating() {
+    public Order() {
     }
 
     public String getFirstName() {
@@ -97,5 +102,18 @@ public class OrderCreating {
 
     public void setColor(List<String> color) {
         this.color = color;
+    }
+
+    public static Response getOrdersListResponse() {
+        return given()
+                .get(TestStandEndpoints.ORDER_CREATING_ENDPOINT);
+    }
+
+    public Response getOrderCreatingResponse(Object body) {
+        return given()
+                .header("Content-type", "application/json")
+                .body(body)
+                .when()
+                .post(TestStandEndpoints.ORDER_CREATING_ENDPOINT);
     }
 }

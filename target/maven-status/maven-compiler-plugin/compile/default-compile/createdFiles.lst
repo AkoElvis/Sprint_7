@@ -1,6 +1,6 @@
 Courier.class
 Constants\Messages.class
-OrderCreating.class
 TestData\CreatingRandomData.class
 CourierId.class
+Order.class
 Constants\TestStandEndpoints.class
