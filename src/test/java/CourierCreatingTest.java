@@ -1,13 +1,13 @@
+import Constants.Messages;
+import Constants.TestStandEndpoints;
+import TestData.CreatingRandomData;
+import io.qameta.allure.Description;
+import io.qameta.allure.junit4.DisplayName;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.Random;
-
-import static Constants.TestStand.BASE_URL;
-import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 
 public class CourierCreatingTest {
@@ -18,113 +18,72 @@ public class CourierCreatingTest {
 
     @Before
     public void setUp() {
-        RestAssured.baseURI = BASE_URL;
-        this.firstName = "KolyaevCourierCreatingTest" + new Random().nextInt(100);
-        this.login = "KolyaevCourierCreatingTest" + new Random().nextInt(100);
-        this.password = "KolyaevCourierCreatingTest" + new Random().nextInt(100);
+        RestAssured.baseURI = TestStandEndpoints.BASE_URL;
+        this.firstName = CreatingRandomData.getRandomKolyaevString();
+        this.login = CreatingRandomData.getRandomKolyaevString();
+        this.password = CreatingRandomData.getRandomKolyaevString();
     }
-
 
     @After
     public void deleteCreatedCourier() {
         Courier createdCourier = new Courier(login,password);
-        Response courierLoginResponse = given()
-                .header("Content-type", "application/json")
-                .body(createdCourier)
-                .when()
-                .post("/api/v1/courier/login");
+        Response courierLoginResponse = createdCourier.getResponseLoginCourier(createdCourier);
         CourierId courierId = courierLoginResponse.body().as(CourierId.class);
-
-        int id = courierId.getId();
-
-        given()
-                .header("Content-type", "application/json")
-                .body("{ \"id\": \"" + id + "\"}")
-                .delete("/api/v1/courier/" + id);
+        Courier.deleteCourier(courierId.getId());
     }
 
     @Test
+    @DisplayName("Checking the ability to create a courier")
+    @Description("Checking the body and status code of a successful response")
     public void checkSuccessfulBodyAndCode() {
-
         Courier courier = new Courier(login,password,firstName );
-        Response response =
-                given()
-                        .header("Content-type", "application/json")
-                        .body(courier)
-                        .when()
-                        .post("/api/v1/courier");
+        Response response = courier.getResponseCreateCourier(courier);
         response.then().assertThat().body("ok", equalTo(true))
                 .and()
                 .statusCode(201);
-
     }
 
     @Test
+    @DisplayName("Checking the inability to create a courier without a login")
+    @Description("Checking the body and status code of an unsuccessful response")
     public void checkNoLoginBodyAndCode() {
-
-
         Courier courier = new Courier("", password,firstName);
-        Response response =
-                given()
-                        .header("Content-type", "application/json")
-                        .body(courier)
-                        .when()
-                        .post("/api/v1/courier");
-        response.then().assertThat().body("message", equalTo("Недостаточно данных для создания учетной записи"))
+        Response response = courier.getResponseCreateCourier(courier);
+        response.then().assertThat().body("message", equalTo(Messages.INCOMPLETE_DATA_TO_CREATE))
                 .and()
                 .statusCode(400);
     }
 
     @Test
+    @DisplayName("Checking the inability to create a courier without a password")
+    @Description("Checking the body and status code of an unsuccessful response")
     public void checkNoPasswordBodyAndCode() {
-
         Courier courier = new Courier(login, "", firstName);
-        Response response =
-                given()
-                        .header("Content-type", "application/json")
-                        .body(courier)
-                        .when()
-                        .post("/api/v1/courier");
-        response.then().assertThat().body("message", equalTo("Недостаточно данных для создания учетной записи"))
+        Response response = courier.getResponseCreateCourier(courier);
+        response.then().assertThat().body("message", equalTo(Messages.INCOMPLETE_DATA_TO_CREATE))
                 .and()
                 .statusCode(400);
     }
 
     @Test
+    @DisplayName("Checking the inability to create a courier without a login and password")
+    @Description("Checking the body and status code of an unsuccessful response")
     public void checkNoLoginNoPasswordBodyAndCode() {
-
         Courier courier = new Courier("", "", firstName);
-        Response response =
-                given()
-                        .header("Content-type", "application/json")
-                        .body(courier)
-                        .when()
-                        .post("/api/v1/courier");
-        response.then().assertThat().body("message", equalTo("Недостаточно данных для создания учетной записи"))
+        Response response = courier.getResponseCreateCourier(courier);
+        response.then().assertThat().body("message", equalTo(Messages.INCOMPLETE_DATA_TO_CREATE))
                 .and()
                 .statusCode(400);
     }
 
-    //Не смог придумать как сделать этот тест по-нормальному независимым. Хотелось бы использовать здесь способ подготовки
-    //тестовых данных "Запрос данных у приложения", сходить в таблицу Couriers и взять там первый из массива id, но не вижу
-    //в документации такой ручки
     @Test
+    @DisplayName("Checking the inability to create two identical couriers")
+    @Description("Checking the body and status code of an unsuccessful response")
     public void checkExistedLoginBodyAndCode() {
-
         Courier courier = new Courier(login,password,firstName );
-                given()
-                        .header("Content-type", "application/json")
-                        .body(courier)
-                        .when()
-                        .post("/api/v1/courier");
-
-        Response response = given()
-                .header("Content-type", "application/json")
-                .body(courier)
-                .when()
-                .post("/api/v1/courier");
-
-        response.then().assertThat().body("message", equalTo("Этот логин уже используется. Попробуйте другой."))
+                courier.createCourier(courier);
+        Response response = courier.getResponseCreateCourier(courier);
+        response.then().assertThat().body("message", equalTo(Messages.EXISTED_LOGIN))
                 .and()
                 .statusCode(409);
     }
