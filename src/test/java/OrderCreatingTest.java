@@ -75,7 +75,7 @@ public class OrderCreatingTest {
     @DisplayName("Checking the ability to create an order with the colors of the scooter specified as GRAY and BLACK")
     @Description("Checking the body and status code of a successful response")
     public void checkGrayAndBlackColorOrderCreating() {
-        //color.add("BLACK");
+        color.add("BLACK");
         color.add("GRAY");
         Order order = new Order(firstName, lastName, address, metroStation, phone, number, deliveryDate, comment, color);
         Response response = order.getOrderCreatingResponse(order);
